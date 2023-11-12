@@ -12,8 +12,8 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-#ifndef _PROS_MAIN_H_
-#define _PROS_MAIN_H_
+#ifndef _PROS_MAIN_HPP_
+#define _PROS_MAIN_HPP_
 
 /**
  * If defined, some commonly used enums will have preprocessor macros which give
@@ -41,6 +41,9 @@
  */
 //#include "okapi/api.hpp"
 //#include "pros/api_legacy.h"
+#include "globals.hpp"
+#include "catapult.hpp"
+#include "odometry.hpp"
 
 /**
  * If you find doing pros::Motor() to be tedious and you'd prefer just to do
@@ -78,4 +81,4 @@ void opcontrol(void);
 //#include <iostream>
 #endif
 
-#endif  // _PROS_MAIN_H_
+#endif  // _PROS_MAIN_HPP_
