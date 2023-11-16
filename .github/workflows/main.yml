@@ -25,12 +25,13 @@ jobs:
     - name: Download pros
       run: |
         pip install pros-cli
-    - name: Print file
-      run: |
-        find -path "./.github*"
     - name: Build code
       run: |
         pros make
+    - name: Print file
+      run: |
+        sudo cd /usr
+        sudo find -type d
 #    - name: Builds Code
 #      uses: fishsticks89/pros-build@v1
 
