@@ -27,7 +27,7 @@ jobs:
         pip install pros-cli
     - name: Print file
       run: |
-        find -type d
+        find -path "./.github*"
     - name: Build code
       run: |
         pros make
