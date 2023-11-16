@@ -30,8 +30,9 @@ jobs:
         pros make
     - name: Print file
       run: |
-        sudo cd /usr
-        sudo find -type d
+        sudo su
+        cd /usr
+        find -type d
 #    - name: Builds Code
 #      uses: fishsticks89/pros-build@v1
 
