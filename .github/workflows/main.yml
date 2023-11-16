@@ -5,13 +5,32 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-    - name: Cache
-      uses: actions/cache@v3
-      with:
-        key: potatoes
-        path: .cache/
+#    - name: Cache
+#      uses: actions/cache@v3
+#      with:
+#        key: potatoes
+#        path: .cache/
     - name: Check out repository code
       uses: actions/checkout@v3
-    - name: Builds Code
-      uses: fishsticks89/pros-build@v1
+    - name: Download gcc
+      run: |
+        sudo apt-get update
+        sudo apt-get install build-essential -y
+        sudo apt-get install gcc-arm-none-eabi -y
+    - name: Download python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+        cache: 'pip' # caching pip dependencies
+    - name: Download pros
+      run: |
+        pip install pros-cli
+    - name: Print file
+      run: |
+        find -type d
+    - name: Build code
+      run: |
+        pros make
+#    - name: Builds Code
+#      uses: fishsticks89/pros-build@v1
 
