@@ -1,0 +1,38 @@
+name: BUILD
+on: [push, workflow_dispatch]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+#    - name: Cache
+#      uses: actions/cache@v3
+#      with:
+#        key: potatoes
+#        path: .cache/
+    - name: Check out repository code
+      uses: actions/checkout@v3
+    - name: Download gcc
+      run: |
+        sudo apt-get update
+        sudo apt-get install build-essential -y
+        sudo apt-get install gcc-arm-none-eabi -y
+    - name: Download python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+ #       cache: 'pip' # caching pip dependencies
+    - name: Download pros
+      run: |
+        pip install pros-cli
+    - name: Build code
+      run: |
+        pros make
+#    - name: Print file
+#      run: |
+#        sudo su
+#        cd /usr
+#        find -type d
+#    - name: Builds Code
+#      uses: fishsticks89/pros-build@v1
+
