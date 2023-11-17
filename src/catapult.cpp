@@ -41,15 +41,18 @@ namespace  // functions/variables local to this file
 
 
 void cata_control(void* ignore) {
+  bool is_rapid_fire = false;
   while (true) {
+    if(controls::toggle_rapid_fire()) {
+      is_rapid_fire = !is_rapid_fire;
+    }
     while (position == 0) {
       launch_position();
     }
     while (position == 1) {
-      if(controls::launch()) {
+      if(controls::launch() || is_rapid_fire) {
         launch_position();
-      }
-      if(controls::lock_intake()) {
+      } else if(controls::lock_intake()) {
         lock_position();
       }
     }
@@ -59,7 +62,7 @@ void cata_control(void* ignore) {
       }
     }
     while (position == 3) {
-      if(controls::launch()) {
+      if(controls::launch() || is_rapid_fire) {
         home_position();
       }
     }

@@ -20,11 +20,12 @@ inline pros::Controller master(CONTROLLER_MASTER);
 inline pros::Rotation cata_sensor(10);
 inline pros::Imu inertial(11);
 
-// https://pros.cs.purdue.edu/v5/tutorials/topical/multitasking.html#synchronization
+// NOTE: https://pros.cs.purdue.edu/v5/tutorials/topical/multitasking.html#synchronization
 
 inline double robot_x(0.0);
 inline double robot_y(0.0);
 
+inline bool is_arcade = false;
 
 namespace controls
 {
@@ -32,7 +33,10 @@ namespace controls
     inline bool intake_backward() {return master.get_digital(DIGITAL_L2);}
     inline bool launch() {return master.get_digital(DIGITAL_B);}
     inline bool lock_intake() {return master.get_digital(DIGITAL_DOWN);}
-    inline bool wing() {return master.get_digital(DIGITAL_R1);}
+    inline bool toggle_rapid_fire() {return master.get_digital_new_press(DIGITAL_X);}
+    inline bool toggle_drive_direction() {return master.get_digital_new_press(DIGITAL_X);}
+    inline bool slow_joystick() {return master.get_digital(DIGITAL_R1);}
+    //inline bool wing() {return master.get_digital(DIGITAL_R1);}
 } // namespace controls
 
 
