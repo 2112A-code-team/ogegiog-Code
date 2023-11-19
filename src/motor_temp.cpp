@@ -1,11 +1,14 @@
 #include "main.hpp"
-
-int line_num = 1;
-void print_temp(pros::Motor &motor, std::string name) {
-    std::string text = name + ": " + std::to_string(motor.get_temperature());
-    pros::screen::print(pros::E_TEXT_SMALL, line_num, text.c_str());
-    line_num++;
+namespace  // functions/variables local to this file
+{
+    int line_num = 1;
+    void print_temp(pros::Motor &motor, std::string name) {
+        std::string text = name + ": " + std::to_string(motor.get_temperature());
+        pros::screen::print(pros::E_TEXT_SMALL, line_num, text.c_str());
+        line_num++;
+    }  
 }
+
 //task that prints motor temps to brain screen
 void monitor_temp(void* ignore) {
     while (true) {

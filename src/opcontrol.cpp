@@ -2,22 +2,13 @@
 #include "main.hpp"
 #include <cassert>
 
-namespace //these functions are local to this file
+namespace // functions/variables local to this file
 {
-    // Curves the joystick values to provide greater control
-    // \param joy_val The value of the joystick: [-127, 127]
-    // \param curve Controls the intensity of curve, should not be negative
-    // \return Curved joystick value: [-127, 127]
     double curve_joystick(double joy_val, double curve) {
         double abs_val = std::abs(joy_val) / 127;
         return joy_val * std::pow(abs_val, curve);
     }
-
 }
-
-
-
-
 
 /**
  * Runs the operator control code. This function will be started in its own task
@@ -44,50 +35,57 @@ void opcontrol() {
     if(is_arcade) {
       // joysticks - arcade drive
       const int deadzone = 5;
-      double curved_left = 0;
-      double curved_right = 0;
-      if(master.get_analog(ANALOG_LEFT_Y) >= deadzone) {
-        curved_left = curve_joystick(master.get_analog(ANALOG_LEFT_Y), 1);
+      double left_joystick = master.get_analog(ANALOG_LEFT_Y);
+      double right_joystick = master.get_analog(ANALOG_RIGHT_X);
+      if(controls::toggle_rapid_fire()) {
+        // push all control to one joystick when rapid firing
+        right_joystick = master.get_analog(ANALOG_LEFT_X);
       }
-      if(master.get_analog(ANALOG_RIGHT_Y) >= deadzone) {
-        curved_right = curve_joystick(master.get_analog(ANALOG_RIGHT_Y), 1);
+      if(std::abs(left_joystick) > deadzone) {
+        left_joystick = curve_joystick(left_joystick, 1);
+      } else {
+        left_joystick = 0;
       }
-      if(controls::slow_joystick()) {
-        curved_left *= 0.5;
-        curved_right *= 0.5;
+      if(std::abs(right_joystick) < deadzone) {
+        right_joystick = curve_joystick(right_joystick, 1);
+      } else {
+        right_joystick  = 0;
       }
-      // prevent joystick clipping:
-      // see vexforum.com/t/arcade-and-x-arcade-drive-using-full-range-of-joystick-without-clipping/72614/2
-      double forward_speed = curved_left - (curved_left * std::abs(curved_right))/(127*2);
-      double turn_speed = curved_left - (curved_right * std::abs(curved_left))/(127*2);
-      if(controls::toggle_drive_direction()) {
+      if(controls::slow_joysticks()) {
+        left_joystick *= 0.5;
+        right_joystick *= 0.5;
+      }
+      if(controls::reverse_joysticks()) {
         forward_speed *= -1;
         turn_speed *= -1;
       }
+      // prevent joystick clipping:
+      // see vexforum.com/t/arcade-and-x-arcade-drive-using-full-range-of-joystick-without-clipping/72614/2
+      double forward_speed = left_joystick - (left_joystick * std::abs(right_joystick))/(127*2);
+      double turn_speed = left_joystick - (right_joystick * std::abs(left_joystick))/(127*2);
       left_wheels.move(forward_speed + turn_speed);
       right_wheels.move(forward_speed+ turn_speed);
     } else {
       //joysticks - tank drive
       const int deadzone = 5;
-      double curved_left = 0;
-      double curved_right = 0;
+      double left_joystick = 0;
+      double right_joystick = 0;
       if(master.get_analog(ANALOG_LEFT_Y) >= deadzone) {
-        curved_left = curve_joystick(master.get_analog(ANALOG_LEFT_Y), 1);
+        left_joystick = curve_joystick(master.get_analog(ANALOG_LEFT_Y), 1);
       }
       if(master.get_analog(ANALOG_RIGHT_Y) >= deadzone) {
-        curved_right = curve_joystick(master.get_analog(ANALOG_RIGHT_Y), 1);
+        right_joystick = curve_joystick(master.get_analog(ANALOG_RIGHT_Y), 1);
       }
-      if(controls::slow_joystick()) {
-        curved_left *= 0.5;
-        curved_right *= 0.5;
+      if(controls::slow_joysticks()) {
+        left_joystick *= 0.5;
+        right_joystick *= 0.5;
       }
-      if(controls::toggle_drive_direction()) {
-        curved_left *= -1;
-        curved_right *= -1;
+      if(controls::reverse_joysticks()) {
+        left_joystick *= -1;
+        right_joystick *= -1;
       }
-      left_wheels.move(curved_left);
-      right_wheels.move(curved_right);
-      
+      left_wheels.move(left_joystick);
+      right_wheels.move(right_joystick);     
     }
     pros::delay(10);
   }

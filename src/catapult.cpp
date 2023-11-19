@@ -1,6 +1,6 @@
 #include "main.hpp"
 
-namespace  // functions/variables local to this file
+namespace // functions/variables local to this file
 {
   const int launch_angle = 66;
   const int block_angle = 44;
@@ -41,16 +41,12 @@ namespace  // functions/variables local to this file
 
 
 void cata_control(void* ignore) {
-  bool is_rapid_fire = false;
   while (true) {
-    if(controls::toggle_rapid_fire()) {
-      is_rapid_fire = !is_rapid_fire;
-    }
     while (position == 0) {
       launch_position();
     }
     while (position == 1) {
-      if(controls::launch() || is_rapid_fire) {
+      if(controls::launch() || controls::rapid_fire()) {
         launch_position();
       } else if(controls::lock_intake()) {
         lock_position();
@@ -62,7 +58,7 @@ void cata_control(void* ignore) {
       }
     }
     while (position == 3) {
-      if(controls::launch() || is_rapid_fire) {
+      if(controls::launch() || controls::rapid_fire()) {
         home_position();
       }
     }

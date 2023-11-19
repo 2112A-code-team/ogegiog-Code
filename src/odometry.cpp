@@ -1,6 +1,6 @@
 #include "main.hpp"
 
-namespace
+namespace // functions/variables local to this file
 {
     const double pi = 3.14159265358979323846;
     const double gear_ratio = 84.0/12.0;
@@ -9,7 +9,7 @@ namespace
     double deg_to_rad(double degrees) {
         return degrees * pi / 180;
     }
-} // functions/variables local to this file
+}
 
 
 

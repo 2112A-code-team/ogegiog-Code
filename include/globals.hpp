@@ -33,9 +33,29 @@ namespace controls
     inline bool intake_backward() {return master.get_digital(DIGITAL_L2);}
     inline bool launch() {return master.get_digital(DIGITAL_B);}
     inline bool lock_intake() {return master.get_digital(DIGITAL_DOWN);}
-    inline bool toggle_rapid_fire() {return master.get_digital_new_press(DIGITAL_X);}
-    inline bool toggle_drive_direction() {return master.get_digital_new_press(DIGITAL_X);}
-    inline bool slow_joystick() {return master.get_digital(DIGITAL_R1);}
+    inline bool rapid_fire() {
+        static bool is_rapid_fire = false;
+        static pros::Task button_check([&] {
+            while (true) {
+                if(master.get_digital_new_press(DIGITAL_X)) is_rapid_fire ^= 1;
+                pros::delay(10);
+            }
+        });
+        return is_rapid_fire;
+    }
+    inline bool reverse_joysticks() {
+        static bool is_reversed = false;
+        static pros::Task button_check([&] {
+            while (true) {
+                if(master.get_digital_new_press(DIGITAL_Y)) is_reversed ^= 1;
+                
+                pros::delay(10);
+            }
+        });
+        return is_reversed;
+    }
+    inline bool slow_joysticks() {return master.get_digital(DIGITAL_R1);
+    }
     //inline bool wing() {return master.get_digital(DIGITAL_R1);}
 } // namespace controls
 
