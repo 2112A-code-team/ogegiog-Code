@@ -1,6 +1,7 @@
 #ifndef _GLOBALS_HPP_
 #define _GLOBALS_HPP_
 #include "main.hpp"
+#include <atomic>
 
 
 /**
@@ -37,8 +38,8 @@ namespace controls
         static bool is_rapid_fire = false;
         static pros::Task button_check([&] {
             while (true) {
-                if(master.get_digital_new_press(DIGITAL_X)) is_rapid_fire ^= 1;
-                pros::delay(10);
+                if(master.get_digital_new_press(DIGITAL_X)) is_rapid_fire ^= true;
+                pros::delay(50);
             }
         });
         return is_rapid_fire;
@@ -47,9 +48,8 @@ namespace controls
         static bool is_reversed = false;
         static pros::Task button_check([&] {
             while (true) {
-                if(master.get_digital_new_press(DIGITAL_Y)) is_reversed ^= 1;
-                
-                pros::delay(10);
+                if(master.get_digital_new_press(DIGITAL_Y)) is_reversed ^= true;
+                pros::delay(50);
             }
         });
         return is_reversed;

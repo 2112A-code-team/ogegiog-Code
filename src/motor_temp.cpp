@@ -14,12 +14,12 @@ void monitor_temp(void* ignore) {
     while (true) {
         pros::screen::print(pros::E_TEXT_SMALL, 1, "Motor temps: (C)");
         line_num = 2;
-        print_temp(left_wheels[0], "drive left front");
-        print_temp(left_wheels[1], "drive left front");
-        print_temp(right_wheels[0], "drive right front");
-        print_temp(right_wheels[1], "drive right front");
-        print_temp(cata_motor[0], "cata left");
-        print_temp(cata_motor[1], "cata right");
+        print_temp(left_front, "drive left front");
+        print_temp(left_back, "drive left back");
+        print_temp(right_front, "drive right front");
+        print_temp(right_back, "drive right back");
+        print_temp(cata_left, "cata left");
+        print_temp(cata_right, "cata right");
         print_temp(intake_motor, "intake");
         pros::delay(1000);
     }
