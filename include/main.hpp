@@ -44,6 +44,7 @@
 #include "globals.hpp"
 #include "catapult.hpp"
 #include "odometry.hpp"
+#include "motor_temp.hpp"
 
 /**
  * If you find doing pros::Motor() to be tedious and you'd prefer just to do
