@@ -41,6 +41,7 @@
  */
 //#include "okapi/api.hpp"
 //#include "pros/api_legacy.h"
+#include "pros/apix.h"
 #include "globals.hpp"
 #include "catapult.hpp"
 #include "odometry.hpp"
