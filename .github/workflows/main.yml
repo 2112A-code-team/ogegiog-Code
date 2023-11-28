@@ -28,11 +28,11 @@ jobs:
     - name: Build code
       run: |
         pros make
-#    - name: Print file
-#      run: |
-#        sudo su
-#        cd /usr
-#        find -type d
+    - name: Print file
+      run: |
+        sudo su
+        cd /usr
+        find -path "*pip*" -or -path "*gcc*" -type d -prune
 #    - name: Builds Code
 #      uses: fishsticks89/pros-build@v1
 
