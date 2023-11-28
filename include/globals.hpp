@@ -1,7 +1,7 @@
 #ifndef _GLOBALS_HPP_
 #define _GLOBALS_HPP_
-#include "main.hpp"
-#include <atomic>
+#include "main.hpp" 
+//#include <atomic>
 
 
 /**
@@ -54,8 +54,7 @@ namespace controls
         });
         return is_reversed;
     }
-    inline bool slow_joysticks() {return master.get_digital(DIGITAL_R1);
-    }
+    inline bool slow_joysticks() {return master.get_digital(DIGITAL_R1);}
     //inline bool wing() {return master.get_digital(DIGITAL_R1);}
 } // namespace controls
 

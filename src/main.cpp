@@ -7,15 +7,15 @@
  * to keep execution time for this mode under a few seconds.
  */
 void initialize() {
-    left_front.set_encoder_units(MOTOR_ENCODER_DEGREES);
-    left_back.set_encoder_units(MOTOR_ENCODER_DEGREES);
-    right_front.set_encoder_units(MOTOR_ENCODER_DEGREES);
-    right_back.set_encoder_units(MOTOR_ENCODER_DEGREES);
-    cata_left.set_encoder_units(MOTOR_ENCODER_DEGREES);
-    cata_right.set_encoder_units(MOTOR_ENCODER_DEGREES);
-    intake_motor.set_encoder_units(MOTOR_ENCODER_DEGREES);
-    
-    pros::Task print_motor_task(monitor_temp);
+  left_front.set_encoder_units(MOTOR_ENCODER_DEGREES);
+  left_back.set_encoder_units(MOTOR_ENCODER_DEGREES);
+  right_front.set_encoder_units(MOTOR_ENCODER_DEGREES);
+  right_back.set_encoder_units(MOTOR_ENCODER_DEGREES);
+  cata_left.set_encoder_units(MOTOR_ENCODER_DEGREES);
+  cata_right.set_encoder_units(MOTOR_ENCODER_DEGREES);
+  intake_motor.set_encoder_units(MOTOR_ENCODER_DEGREES);
+
+  pros::Task print_motor_task(monitor_temp);
 }
 
 /**
@@ -35,7 +35,3 @@ void disabled() {}
  * starts.
  */
 void competition_initialize() {}
-
-
-
-
