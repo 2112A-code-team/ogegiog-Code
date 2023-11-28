@@ -12,27 +12,19 @@ jobs:
 #        path: .cache/
     - name: Check out repository code
       uses: actions/checkout@v3
-    - name: Download gcc
+    - name: Download arm gcc toolchain
       run: |
         sudo apt-get update
         sudo apt-get install gcc-arm-none-eabi -y
-#       sudo apt-get install build-essential -y
     - name: Download python
       uses: actions/setup-python@v4
       with:
         python-version: '3.9'
- #       cache: 'pip' # caching pip dependencies
+        cache: 'pip' # caching pip dependencies
     - name: Download pros
       run: |
         pip install pros-cli
     - name: Build code
       run: |
         pros make
-    - name: Print file
-      run: |
-        sudo su
-        cd /usr
-        find -path "*pip*" -or -path "*gcc*" -type d -prune
-#    - name: Builds Code
-#      uses: fishsticks89/pros-build@v1
 
