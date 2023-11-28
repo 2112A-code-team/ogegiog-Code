@@ -15,8 +15,8 @@ jobs:
     - name: Download gcc
       run: |
         sudo apt-get update
-        sudo apt-get install build-essential -y
         sudo apt-get install gcc-arm-none-eabi -y
+#       sudo apt-get install build-essential -y
     - name: Download python
       uses: actions/setup-python@v4
       with:
