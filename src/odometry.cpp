@@ -10,10 +10,12 @@ double deg_to_rad(double degrees) { return degrees * pi / 180; }
 } // namespace
 
 void odometry(void *ignore) {
-  double prev_left_encoder =
-      (left_front.get_position() + left_back.get_position()) / 2;
-  double prev_right_encoder =
-      (right_front.get_position() + right_back.get_position()) / 2;
+  double prev_left_encoder = 0;
+  double prev_right_encoder = 0;
+  left_front.tare_position();
+  left_back.tare_position();
+  right_front.tare_position();
+  right_back.tare_position();
   while (true) {
     double left_encoder =
         (left_front.get_position() + left_back.get_position()) / 2;
