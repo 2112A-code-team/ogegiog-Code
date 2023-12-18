@@ -14,7 +14,7 @@ void initialize() {
   cata_left.set_encoder_units(MOTOR_ENCODER_DEGREES);
   cata_right.set_encoder_units(MOTOR_ENCODER_DEGREES);
   intake_motor.set_encoder_units(MOTOR_ENCODER_DEGREES);
-
+  inertial.set_data_rate(5);
   pros::Task print_motor_task(monitor_temp);
 }
 

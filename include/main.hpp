@@ -43,7 +43,7 @@
 //#include "pros/api_legacy.h"
 #include "globals.hpp"
 #include "catapult.hpp"
-#include "odometry.hpp"
+#include "auton_funcs.hpp"
 #include "motor_temp.hpp"
 
 /**

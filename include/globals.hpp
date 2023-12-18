@@ -23,9 +23,6 @@ inline pros::Imu inertial(11);
 
 // NOTE: https://pros.cs.purdue.edu/v5/tutorials/topical/multitasking.html#synchronization
 
-inline double robot_x(0.0);
-inline double robot_y(0.0);
-
 inline bool is_arcade = false;
 
 namespace controls
