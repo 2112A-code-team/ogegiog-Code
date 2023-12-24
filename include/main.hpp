@@ -41,9 +41,11 @@
  */
 //#include "okapi/api.hpp"
 //#include "pros/api_legacy.h"
+
+#include "EZ-Template/api.hpp"
+
 #include "globals.hpp"
 #include "catapult.hpp"
-#include "odometry.hpp"
 #include "motor_temp.hpp"
 
 /**

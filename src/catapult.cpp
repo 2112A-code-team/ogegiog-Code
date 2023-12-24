@@ -5,9 +5,11 @@ namespace // functions/variables local to this file
 const int launch_angle = 66;
 const int block_angle = 44;
 int position = 0;
+//enum {NEED_RESET, LAUNCH, LOCK, HOME} next_position = NEED_RESET;
 
 void launch_position() {
   position = 0;
+  //next_position = NEED_RESET;
   cata_motor.move_velocity(40);
   while (cata_sensor.get_angle() <= launch_angle ||
          cata_sensor.get_angle() >= 340) {
@@ -15,8 +17,9 @@ void launch_position() {
   }
   cata_motor.move_velocity(0);
   position = 3;
+  //next_position = HOME;
 }
-void home_position() {
+void lock_position() {
   position = 0;
   cata_motor.move_velocity(40);
   while (cata_sensor.get_angle() <= block_angle ||
@@ -26,7 +29,7 @@ void home_position() {
   cata_motor.move_velocity(0);
   position = 2;
 }
-void lock_position() {
+void home_position() {
   position = 0;
   cata_motor.move_velocity(40);
   while (cata_sensor.get_angle() >= 10) {

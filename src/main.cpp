@@ -15,6 +15,7 @@ void initialize() {
   cata_right.set_encoder_units(MOTOR_ENCODER_DEGREES);
   intake_motor.set_encoder_units(MOTOR_ENCODER_DEGREES);
 
+  ez::as::auton_selector.add_autons({});
   pros::Task print_motor_task(monitor_temp);
 }
 
