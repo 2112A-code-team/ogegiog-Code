@@ -7,16 +7,15 @@
  * to keep execution time for this mode under a few seconds.
  */
 void initialize() {
-  left_front.set_encoder_units(MOTOR_ENCODER_DEGREES);
-  left_back.set_encoder_units(MOTOR_ENCODER_DEGREES);
-  right_front.set_encoder_units(MOTOR_ENCODER_DEGREES);
-  right_back.set_encoder_units(MOTOR_ENCODER_DEGREES);
+  left_wheels.set_encoder_units(MOTOR_ENCODER_DEGREES);
+  right_wheels.set_encoder_units(MOTOR_ENCODER_DEGREES);
   cata_left.set_encoder_units(MOTOR_ENCODER_DEGREES);
   cata_right.set_encoder_units(MOTOR_ENCODER_DEGREES);
+  cata_motors.set_encoder_units(MOTOR_ENCODER_DEGREES);
   intake_motor.set_encoder_units(MOTOR_ENCODER_DEGREES);
 
   ez::as::auton_selector.add_autons({});
-  pros::Task print_motor_task(monitor_temp);
+  
 }
 
 /**
