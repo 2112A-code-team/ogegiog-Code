@@ -46,3 +46,11 @@ void far_side_auton() {
   chassis.set_drive_pid(-50, DRIVE_SPEED);
   chassis.wait_drive();
 }
+
+void near_side_auton() {
+  const int DRIVE_SPEED = 110; 
+  const int TURN_SPEED  = 90;
+  const int SWING_SPEED = 90;
+  //Deploy intake
+  launch_position();
+}

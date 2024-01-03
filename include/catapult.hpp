@@ -5,6 +5,12 @@
 
 void cata_control(void*);
 
+void launch_position();
+
+void lock_position();
+
+void home_position();
+
 #endif
 
 

@@ -7,6 +7,7 @@ const int block_angle = 44;
 const int cata_velocity = 40;
 int position = 0;
 //enum {NEED_RESET, LAUNCH, LOCK, HOME} next_position = NEED_RESET;
+} // namespace
 
 void launch_position() {
   position = 0;
@@ -44,7 +45,7 @@ void home_position() {
   }
   position = 1;
 }
-} // namespace
+
 
 void cata_control(void *ignore) {
   while (true) {
