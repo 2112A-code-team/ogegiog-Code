@@ -16,11 +16,19 @@ void autonomous() {
   ez::as::auton_selector.call_selected_auton(); 
 }
 
-void far_side_auton() {
+/*
+ANGLE VALUES FOR TURNING:
+Turns are relative to STARTING angle of robot, NOT the current angle
+    0/360 (start angle)
+  90 [ ] 270
+     180
+*/
+
+void far_side_auton_awp() {
   const int DRIVE_SPEED = 110; 
   const int TURN_SPEED  = 90;
   const int SWING_SPEED = 90;
-  double dist_from_wall = 10;
+  double dist_from_wall = 10; // add distance sensor here
   //Drive forward
   chassis.set_drive_pid(dist_from_wall, DRIVE_SPEED, true);
   chassis.wait_drive();
@@ -43,14 +51,35 @@ void far_side_auton() {
   chassis.set_turn_pid(90, TURN_SPEED);
   chassis.wait_drive();
   //Drive to elevation bar backwards
-  chassis.set_drive_pid(-50, DRIVE_SPEED);
+  chassis.set_drive_pid(-50, DRIVE_SPEED); // needs tuning
   chassis.wait_drive();
 }
 
-void near_side_auton() {
+void near_side_auton_awp() {
   const int DRIVE_SPEED = 110; 
   const int TURN_SPEED  = 90;
   const int SWING_SPEED = 90;
   //Deploy intake
-  launch_position();
+  //launch_position();
+  //Drive and face to goal
+  chassis.set_drive_pid(60, DRIVE_SPEED, true);
+  chassis.wait_drive();
+  chassis.set_turn_pid(270, TURN_SPEED);
+  chassis.wait_drive();
+  //Allow distance from goal to vary without affecting auton
+  chassis.set_tank(127,127);
+  pros::delay(2000);
+  //back away from goal and turn
+  chassis.set_drive_pid(-6, DRIVE_SPEED);
+  chassis.wait_drive();
+  chassis.set_turn_pid(180, TURN_SPEED);
+  chassis.wait_drive();
+  //Drive backwards to line up with elevation bar
+  chassis.set_drive_pid(-60, DRIVE_SPEED, true);
+  chassis.wait_drive();
+  //Turn to face bar and drive to it
+  chassis.set_turn_pid(90, TURN_SPEED);
+  chassis.wait_drive();
+  chassis.set_drive_pid(-60, DRIVE_SPEED, true); // needs tuning
+  chassis.wait_drive();
 }
