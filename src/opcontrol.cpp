@@ -40,6 +40,7 @@ double get_joystick(pros::controller_analog_e_t joystick, double curve = 1,
  */
 void opcontrol() {
   pros::Task cata_task(cata_control);
+  chassis.reset_drive_sensors_opcontrol();
   while (true) {
     // control intake
     if (controls::intake_forward() && controls::intake_backward()) {

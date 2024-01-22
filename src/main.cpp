@@ -7,8 +7,6 @@
  * to keep execution time for this mode under a few seconds.
  */
 void initialize() {
-  left_wheels.set_encoder_units(MOTOR_ENCODER_DEGREES);
-  right_wheels.set_encoder_units(MOTOR_ENCODER_DEGREES);
   cata_left.set_encoder_units(MOTOR_ENCODER_DEGREES);
   cata_right.set_encoder_units(MOTOR_ENCODER_DEGREES);
   cata_motors.set_encoder_units(MOTOR_ENCODER_DEGREES);

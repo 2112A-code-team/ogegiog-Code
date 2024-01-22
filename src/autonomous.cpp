@@ -29,6 +29,9 @@ void far_side_auton_awp() {
   const int TURN_SPEED  = 90;
   const int SWING_SPEED = 90;
   double dist_from_wall = 10; // add distance sensor here
+
+  chassis.reset_drive_sensor();
+
   //Drive forward
   chassis.set_drive_pid(dist_from_wall, DRIVE_SPEED, true);
   chassis.wait_drive();
@@ -59,6 +62,9 @@ void near_side_auton_awp() {
   const int DRIVE_SPEED = 110; 
   const int TURN_SPEED  = 90;
   const int SWING_SPEED = 90;
+
+  chassis.reset_drive_sensor();
+
   //Deploy intake
   //launch_position();
   //Drive and face to goal
