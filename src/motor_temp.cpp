@@ -19,7 +19,8 @@ void print_temp(pros::Motor &motor, std::string name) {
   } else {
     pros::screen::set_pen(COLOR_BLUE);
   }
-  std::string text = name + ": " + std::to_string(temp);
+  std::string text = name + ": " + std::to_string(temp); 
+  text += " (Port: " + std::to_string(motor.get_port()) + ")";
   pros::screen::print(TEXT_MEDIUM, line_num, text.c_str());
   line_num++;
 }
@@ -31,10 +32,10 @@ void monitor_temp(void *ignore) {
     pros::screen::set_pen(COLOR_WHITE);
     pros::screen::print(TEXT_MEDIUM, 1, "Motor temps: (C)");
     line_num = 2;
-    print_temp(left_front, "drive left front");
-    print_temp(left_back, "drive left back");
-    print_temp(right_front, "drive right front");
-    print_temp(right_back, "drive right back");
+    print_temp(chassis.left_motors.at(0), "drive left front");
+    print_temp(chassis.left_motors.at(1), "drive left back");
+    print_temp(chassis.right_motors.at(0), "drive right front");
+    print_temp(chassis.right_motors.at(1), "drive right back");
     print_temp(cata_left, "cata left");
     print_temp(cata_right, "cata right");
     print_temp(intake_motor, "intake");

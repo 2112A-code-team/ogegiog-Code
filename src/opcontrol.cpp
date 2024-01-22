@@ -51,30 +51,19 @@ void opcontrol() {
     } else {
       intake_motor.brake();
     }
-
-    if (is_arcade) {
-      // joysticks - arcade drive
-      double forward_speed, turn_speed;
-      forward_speed = get_joystick(ANALOG_LEFT_Y);
-      if (controls::rapid_fire()) {
-        // push all control to one joystick when rapid firing
-        turn_speed = get_joystick(ANALOG_LEFT_X);
-      } else {
-        turn_speed = get_joystick(ANALOG_RIGHT_X);
-      }
-      // vexforum.com/t/arcade-and-x-arcade-drive-using-full-range-of-joystick-without-clipping/72614/2
-      // double forward_speed = left - (left * std::abs(right))/(127*2);
-      // double turn_speed = left - (right * std::abs(left))/(127*2);
-      left_wheels.move(forward_speed + turn_speed);
-      right_wheels.move(forward_speed - turn_speed);
+    // joysticks - arcade drive
+    double forward_speed, turn_speed;
+    forward_speed = get_joystick(ANALOG_LEFT_Y);
+    if (controls::rapid_fire()) {
+      // push all control to one joystick when rapid firing
+      turn_speed = get_joystick(ANALOG_LEFT_X);
     } else {
-      // joysticks - tank drive
-      double left_speed, right_speed;
-      left_speed = get_joystick(ANALOG_LEFT_Y);
-      right_speed = get_joystick(ANALOG_RIGHT_Y);
-      left_wheels.move(left_speed);
-      right_wheels.move(right_speed);
+      turn_speed = get_joystick(ANALOG_RIGHT_X);
     }
+    // vexforum.com/t/arcade-and-x-arcade-drive-using-full-range-of-joystick-without-clipping/72614/2
+    // double forward_speed = left - (left * std::abs(right))/(127*2);
+    // double turn_speed = left - (right * std::abs(left))/(127*2);
+    chassis.set_tank(forward_speed + turn_speed, forward_speed - turn_speed);
     pros::delay(10);
   }
 }
