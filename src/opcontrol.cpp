@@ -1,8 +1,6 @@
 #include "main.hpp"
 #include <cmath>
 
-namespace // functions/variables local to this file
-{
 double curve_joystick(double joy_val, double curve) {
   double abs_val = std::abs(joy_val) / 127;
   return joy_val * std::pow(abs_val, curve);
@@ -15,15 +13,9 @@ double get_joystick(pros::controller_analog_e_t joystick, double curve = 1,
   } else {
     joystick_val = 0;
   }
-  if (controls::slow_joysticks()) {
-    joystick_val *= 0.5;
-  }
-  if (controls::reverse_joysticks()) {
-    joystick_val *= -1;
-  }
   return joystick_val;
 }
-} // namespace
+
 
 /**
  * Runs the operator control code. This function will be started in its own task
@@ -39,32 +31,49 @@ double get_joystick(pros::controller_analog_e_t joystick, double curve = 1,
  * task, not resume it from where it left off.
  */
 void opcontrol() {
-  pros::Task cata_task(cata_control);
-  chassis.reset_drive_sensors_opcontrol();
-  while (true) {
-    // control intake
-    if (controls::intake_forward() && controls::intake_backward()) {
-      intake_motor.brake();
-    } else if (controls::intake_forward()) {
-      intake_motor.move_velocity(200);
-    } else if (controls::intake_backward()) {
-      intake_motor.move_velocity(-200);
+  int flywheel_velocity = 80;
+  while(true) {
+    // flywheel arm control
+    if(controls::fly_arm_forward()) {
+      flywheel_arm.move_velocity(200);
+    } else if(controls::fly_arm_backward()) {
+      flywheel_arm.move_velocity(-200);
     } else {
-      intake_motor.brake();
+      flywheel_arm.brake();
     }
-    // joysticks - arcade drive
-    double forward_speed, turn_speed;
-    forward_speed = get_joystick(ANALOG_LEFT_Y);
-    if (controls::rapid_fire()) {
-      // push all control to one joystick when rapid firing
-      turn_speed = get_joystick(ANALOG_LEFT_X);
+
+    // flywheel control
+    if(controls::fvw_up()) flywheel_velocity++;
+    if(controls::fvw_down()) flywheel_velocity--;
+    if(flywheel_velocity < 0) flywheel_velocity = 0;
+    if(flywheel_velocity > 200) flywheel_velocity = 200;
+    if(controls::flywheel_is_on() && controls::fvw_is_reversed()) {
+      flywheel.move_velocity(-flywheel_velocity);
+    } else if (controls::flywheel_is_on) {
+      flywheel.move_velocity(flywheel_velocity);
     } else {
-      turn_speed = get_joystick(ANALOG_RIGHT_X);
+      flywheel.brake();
     }
-    // vexforum.com/t/arcade-and-x-arcade-drive-using-full-range-of-joystick-without-clipping/72614/2
-    // double forward_speed = left - (left * std::abs(right))/(127*2);
-    // double turn_speed = left - (right * std::abs(left))/(127*2);
-    chassis.set_tank(forward_speed + turn_speed, forward_speed - turn_speed);
+
+    // lift control
+    if(controls::lift_up()) {
+      lift.move_velocity(100);
+    } else if(controls::lift_down()) {
+      lift.move_velocity(-100);
+    } else {
+      lift.brake();
+      if(lift.get_positions()[0] < 65) {
+        lift.set_brake_modes(pros::E_MOTOR_BRAKE_COAST);
+      } else {
+        lift.set_brake_modes(pros::E_MOTOR_BRAKE_HOLD);
+      }
+    }
+
+    // drive control
+    double forward_speed = get_joystick(ANALOG_LEFT_Y);
+    double turn_speed = get_joystick(ANALOG_RIGHT_X);
+    left_wheels.move(forward_speed + turn_speed);
+    right_wheels.move(forward_speed - turn_speed);
     pros::delay(10);
   }
 }

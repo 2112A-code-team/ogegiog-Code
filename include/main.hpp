@@ -42,11 +42,8 @@
 //#include "okapi/api.hpp"
 //#include "pros/api_legacy.h"
 
-#include "EZ-Template/api.hpp"
-
 #include "autonomous.hpp"
 #include "globals.hpp"
-#include "catapult.hpp"
 #include "motor_temp.hpp"
 
 /**
