@@ -1,7 +1,7 @@
 #ifndef _GLOBALS_HPP_
 #define _GLOBALS_HPP_
 #include "main.hpp" 
-//#include <atomic>
+#include <deque>
 
 
 /**
@@ -22,7 +22,8 @@ inline pros::ADIDigitalOut wings('H');
 inline pros::Controller master(CONTROLLER_MASTER);
 inline pros::Imu inertial(11);
 
-
+inline pros::Mutex hot_motor_list_lock;
+inline std::deque<std::string> hot_motor_list;
 
 namespace controls
 {

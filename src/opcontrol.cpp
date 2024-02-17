@@ -1,10 +1,13 @@
 #include "main.hpp"
 #include <cmath>
+#include <atomic>
+#include <mutex>
 
 double curve_joystick(double joy_val, double curve) {
   double abs_val = std::abs(joy_val) / 127;
   return joy_val * std::pow(abs_val, curve);
 }
+
 double get_joystick(pros::controller_analog_e_t joystick, double curve = 1,
                     double deadzone = 5) {
   double joystick_val = master.get_analog(joystick);
@@ -14,6 +17,37 @@ double get_joystick(pros::controller_analog_e_t joystick, double curve = 1,
     joystick_val = 0;
   }
   return joystick_val;
+}
+
+std::atomic<int> flywheel_velocity = 80;
+std::atomic<int> wing_count = 0;
+
+
+void update_controller() {
+  int last_warning_index = 0;
+  int loop_time = 0;
+  while(true) {
+    std::string text = "TV: " + std::to_string(flywheel_velocity);
+    master.print(0, 0, text.c_str());
+    std::string text = "AV: " + std::to_string(flywheel.get_actual_velocity());
+    master.print(0, 7, text.c_str());
+    std::string text = "Wing Count:" + std::to_string(wing_count);
+    master.print(1, 0, text.c_str());
+
+    //only update motor warning every 2000 ms
+    if((loop_time % 2000) == 0) {
+      std::lock_guard<pros::Mutex> lock(hot_motor_list_lock);
+      if(hot_motor_list.size() != last_warning_index) {
+        // a new warning has been added
+        std::string text = hot_motor_list[last_warning_index];
+        master.print(2, 0, text.c_str());
+        last_warning_index++;
+      }
+    }
+
+    pros::delay(100);
+    loop_time += 100;
+  }
 }
 
 
@@ -31,8 +65,23 @@ double get_joystick(pros::controller_analog_e_t joystick, double curve = 1,
  * task, not resume it from where it left off.
  */
 void opcontrol() {
-  int flywheel_velocity = 80;
+  pros::Task controller_task(update_controller);
+  bool wing_was_last_out = false;
   while(true) {
+
+    //keep track of wing count
+    if(wing_was_last_out != controls::wing_is_out()) {
+      wing_count++;
+      wing_was_last_out = controls::wing_is_out();
+    }
+
+    //wing control
+    if(controls::wing_is_out()) {
+      wings.set_value(1);
+    } else {
+      wings.set_value(0);
+    }
+
     // flywheel arm control
     if(controls::fly_arm_forward()) {
       flywheel_arm.move_velocity(200);
