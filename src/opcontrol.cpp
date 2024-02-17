@@ -27,11 +27,14 @@ void update_controller() {
   int last_warning_index = 0;
   int loop_time = 0;
   while(true) {
-    std::string text = "TV: " + std::to_string(flywheel_velocity);
+    //this variable holds the text to print
+    // (c++ style strings allow using + to add strings)
+    std::string text;
+    text = "TV: " + std::to_string(flywheel_velocity);
     master.print(0, 0, text.c_str());
-    std::string text = "AV: " + std::to_string(flywheel.get_actual_velocity());
+    text = "AV: " + std::to_string(flywheel.get_actual_velocity());
     master.print(0, 7, text.c_str());
-    std::string text = "Wing Count:" + std::to_string(wing_count);
+    text = "Wing Count:" + std::to_string(wing_count);
     master.print(1, 0, text.c_str());
 
     //only update motor warning every 2000 ms
@@ -39,8 +42,9 @@ void update_controller() {
       std::lock_guard<pros::Mutex> lock(hot_motor_list_lock);
       if(hot_motor_list.size() != last_warning_index) {
         // a new warning has been added
-        std::string text = hot_motor_list[last_warning_index];
+        text = hot_motor_list[last_warning_index];
         master.print(2, 0, text.c_str());
+        master.rumble("..");
         last_warning_index++;
       }
     }

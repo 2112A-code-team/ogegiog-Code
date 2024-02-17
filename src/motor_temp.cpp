@@ -46,7 +46,14 @@ void monitor_temp() {
     pros::screen::set_pen(COLOR_WHITE);
     pros::screen::print(TEXT_MEDIUM, 1, "Motor temps: (C)");
     line_num = 2;
-
+    print_temp(left_front, "left_front");
+    print_temp(left_back, "left_back");
+    print_temp(right_front, "right_front");
+    print_temp(right_back, "right_back");
+    print_temp(flywheel_arm, "flywheel_arm");
+    print_temp(flywheel, "flywheel");
+    print_temp(lift_left, "lift_left");
+    print_temp(lift_right, "lift_right");
     pros::delay(1000);
   }
 }
