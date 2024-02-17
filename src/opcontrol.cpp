@@ -49,7 +49,7 @@ void opcontrol() {
     if(flywheel_velocity > 200) flywheel_velocity = 200;
     if(controls::flywheel_is_on() && controls::fvw_is_reversed()) {
       flywheel.move_velocity(-flywheel_velocity);
-    } else if (controls::flywheel_is_on) {
+    } else if (controls::flywheel_is_on()) {
       flywheel.move_velocity(flywheel_velocity);
     } else {
       flywheel.brake();

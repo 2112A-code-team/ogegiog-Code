@@ -27,20 +27,20 @@ inline pros::Imu inertial(11);
 namespace controls
 {
     inline bool fly_arm_forward() {return master.get_digital(DIGITAL_L2);}
-    inline bool fly_arm_backward() {return master.get_digital(DIGITAL_L2);}
-    inline bool lift_up() {return master.get_digital(DIGITAL_L2);}
-    inline bool lift_down() {return master.get_digital(DIGITAL_L2);}
+    inline bool fly_arm_backward() {return master.get_digital(DIGITAL_L1);}
+    inline bool lift_up() {return master.get_digital(DIGITAL_R1);}
+    inline bool lift_down() {return master.get_digital(DIGITAL_R2);}
     inline bool flywheel_is_on() {
         static bool is_on = false;
-        if(master.get_digital_new_press(DIGITAL_Y)) is_on = !is_on;
+        if(master.get_digital_new_press(DIGITAL_B)) is_on = !is_on;
         return is_on;
     }
     inline bool wing_is_out() {
         static bool is_out = false;
-        if(master.get_digital_new_press(DIGITAL_Y)) is_out = !is_out;
+        if(master.get_digital_new_press(DIGITAL_LEFT)) is_out = !is_out;
         return is_out;
     }
-    inline bool fvw_up() {return master.get_digital(DIGITAL_L2);}
+    inline bool fvw_up() {return master.get_digital(DIGITAL_UP);}
     inline bool fvw_down() {return master.get_digital(DIGITAL_DOWN);}
     inline bool fvw_is_reversed() {
         static bool is_reversed = false;

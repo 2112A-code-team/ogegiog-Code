@@ -27,7 +27,7 @@ void print_temp(pros::Motor &motor, std::string name) {
 } // namespace
 
 // task that prints motor temps to brain screen
-void monitor_temp(void *ignore) {
+void monitor_temp() {
   while (true) {
     pros::screen::set_pen(COLOR_WHITE);
     pros::screen::print(TEXT_MEDIUM, 1, "Motor temps: (C)");
