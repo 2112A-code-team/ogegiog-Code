@@ -45,6 +45,7 @@
 #include "autonomous.hpp"
 #include "globals.hpp"
 #include "motor_temp.hpp"
+#include "alertList.hpp"
 
 /**
  * If you find doing pros::Motor() to be tedious and you'd prefer just to do

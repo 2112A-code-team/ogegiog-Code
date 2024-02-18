@@ -2,28 +2,31 @@
 #define _GLOBALS_HPP_
 #include "main.hpp" 
 #include <deque>
+#include <atomic>
 
 
 /**
  * Initialize all the devices needed (motors, sensors, etc.)
 */
-inline pros::Motor left_front(1, pros::E_MOTOR_GEAR_BLUE);
-inline pros::Motor left_back(2, pros::E_MOTOR_GEAR_BLUE);
-inline pros::Motor right_front(9, pros::E_MOTOR_GEAR_BLUE);
-inline pros::Motor right_back(10, pros::E_MOTOR_GEAR_BLUE);
+inline pros::Motor left_front(-1, pros::E_MOTOR_GEAR_BLUE);
+inline pros::Motor left_back(-2, pros::E_MOTOR_GEAR_BLUE);
+inline pros::Motor right_front(-9, pros::E_MOTOR_GEAR_BLUE);
+inline pros::Motor right_back(-10, pros::E_MOTOR_GEAR_BLUE);
 inline pros::Motor_Group left_wheels({left_front, left_back});
 inline pros::Motor_Group right_wheels({right_front, right_back});
 inline pros::Motor lift_right(11, pros::E_MOTOR_GEAR_RED);
-inline pros::Motor lift_left(20, pros::E_MOTOR_GEAR_RED);
+inline pros::Motor lift_left(-20, pros::E_MOTOR_GEAR_RED);
 inline pros::Motor_Group lift({lift_left, lift_right});
-inline pros::Motor flywheel_arm(19, pros::E_MOTOR_GEAR_GREEN);
-inline pros::Motor flywheel(12, pros::E_MOTOR_GEAR_GREEN);
+inline pros::Motor flywheel_arm(-19, pros::E_MOTOR_GEAR_GREEN);
+inline pros::Motor flywheel(-12, pros::E_MOTOR_GEAR_GREEN);
 inline pros::ADIDigitalOut wings('H');
 inline pros::Controller master(CONTROLLER_MASTER);
 inline pros::Imu inertial(11);
 
-inline pros::Mutex hot_motor_list_lock;
-inline std::deque<std::string> hot_motor_list;
+//inline pros::Mutex hot_motor_list_lock;
+//inline std::deque<std::string> hot_motor_list;
+
+inline std::atomic<int> wing_count = 0;
 
 namespace controls
 {
@@ -38,7 +41,10 @@ namespace controls
     }
     inline bool wing_is_out() {
         static bool is_out = false;
-        if(master.get_digital_new_press(DIGITAL_LEFT)) is_out = !is_out;
+        if(master.get_digital_new_press(DIGITAL_LEFT)) {
+            is_out = !is_out;
+            wing_count++;
+        }
         return is_out;
     }
     inline bool fvw_up() {return master.get_digital(DIGITAL_UP);}

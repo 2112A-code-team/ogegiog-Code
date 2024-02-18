@@ -20,40 +20,53 @@ double get_joystick(pros::controller_analog_e_t joystick, double curve = 1,
 }
 
 std::atomic<int> flywheel_velocity = 80;
-std::atomic<int> wing_count = 0;
 
 
 void update_controller() {
-  int last_warning_index = 0;
-  int loop_time = 0;
+  //int last_warning_index = 0;
+  //int loop_time = 0;
+  master.clear();
+  pros::delay(500);
   while(true) {
     //this variable holds the text to print
     // (c++ style strings allow using + to add strings)
     std::string text;
-    text = "TV: " + std::to_string(flywheel_velocity);
+
+    text = "TV: ";
+    if(controls::fvw_is_reversed()) text += "-";
+    text += std::to_string(flywheel_velocity);
     master.print(0, 0, text.c_str());
-    text = "AV: " + std::to_string(flywheel.get_actual_velocity());
-    master.print(0, 7, text.c_str());
-    text = "Wing Count:" + std::to_string(wing_count);
-    master.print(1, 0, text.c_str());
-
-    //only update motor warning every 2000 ms
-    if((loop_time % 2000) == 0) {
-      std::lock_guard<pros::Mutex> lock(hot_motor_list_lock);
-      if(hot_motor_list.size() != last_warning_index) {
-        // a new warning has been added
-        text = hot_motor_list[last_warning_index];
-        master.print(2, 0, text.c_str());
-        master.rumble("..");
-        last_warning_index++;
-      }
-    }
-
     pros::delay(100);
-    loop_time += 100;
+    int real_vel = static_cast<int>( std::round(flywheel.get_actual_velocity()) );
+    text = "AV: " + std::to_string(real_vel);
+    master.print(0, 7, text.c_str());
+    pros::delay(100);
+    text = "Wing Count: " + std::to_string(wing_count);
+    master.print(1, 0, text.c_str());
+    pros::delay(100);
+    bool newAlert = false;
+    std::tie(text, newAlert) = controller_alerts.getCurrentAlert();
+    if(newAlert) {
+      master.rumble("...");
+      pros::delay(100);
+    }
+    master.print(2, 0, text.c_str());
+    pros::delay(100);
+    //loop_time += 100;
   }
 }
 
+void endgame_timer() {
+  pros::delay(75 * 1000);
+  controller_alerts.addAlert(Alert("30s left!!", Alert::Priority::HIGHEST));
+  pros::delay(15 * 1000);
+  controller_alerts.addAlert(Alert("15s left!!", Alert::Priority::HIGHEST));
+}
+
+void test_alert() {
+  pros::delay(15*1000);
+  controller_alerts.addAlert(Alert("test", Alert::Priority::HIGHEST));
+}
 
 /**
  * Runs the operator control code. This function will be started in its own task
@@ -70,14 +83,11 @@ void update_controller() {
  */
 void opcontrol() {
   pros::Task controller_task(update_controller);
-  bool wing_was_last_out = false;
-  while(true) {
+  pros::Task screen_task(monitor_temp);
+  pros::Task endgame_task(endgame_timer);
+  pros::Task test_task(test_alert);
 
-    //keep track of wing count
-    if(wing_was_last_out != controls::wing_is_out()) {
-      wing_count++;
-      wing_was_last_out = controls::wing_is_out();
-    }
+  while(true) {
 
     //wing control
     if(controls::wing_is_out()) {
@@ -88,9 +98,9 @@ void opcontrol() {
 
     // flywheel arm control
     if(controls::fly_arm_forward()) {
-      flywheel_arm.move_velocity(200);
+      flywheel_arm.move_velocity(50);
     } else if(controls::fly_arm_backward()) {
-      flywheel_arm.move_velocity(-200);
+      flywheel_arm.move_velocity(-50);
     } else {
       flywheel_arm.brake();
     }
@@ -123,8 +133,8 @@ void opcontrol() {
     }
 
     // drive control
-    double forward_speed = get_joystick(ANALOG_LEFT_Y);
-    double turn_speed = get_joystick(ANALOG_RIGHT_X);
+    double forward_speed = get_joystick(ANALOG_RIGHT_X);
+    double turn_speed = get_joystick(ANALOG_LEFT_Y);
     left_wheels.move(forward_speed + turn_speed);
     right_wheels.move(forward_speed - turn_speed);
     pros::delay(10);

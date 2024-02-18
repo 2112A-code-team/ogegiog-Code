@@ -24,13 +24,9 @@ void print_temp(pros::Motor &motor, std::string name) {
   std::string text = name + ": " + std::to_string(temp);
 
   if(temp >= 55) {
-    //add overheat warning to list for controller to display
-    std::lock_guard<pros::Mutex> lock(hot_motor_list_lock);
-    auto list_start = hot_motor_list.begin();
-    auto list_end = hot_motor_list.begin();
-    //only add the warning if it is not already on the list
-    if(std::find(list_start, list_end, text) != list_end) {
-      hot_motor_list.push_back(text);
+    Alert temp_alert = Alert(text);
+    if(!controller_alerts.hasAlert(temp_alert)) {
+      controller_alerts.addAlert(temp_alert);
     }
   }
 
@@ -46,14 +42,14 @@ void monitor_temp() {
     pros::screen::set_pen(COLOR_WHITE);
     pros::screen::print(TEXT_MEDIUM, 1, "Motor temps: (C)");
     line_num = 2;
-    print_temp(left_front, "left_front");
-    print_temp(left_back, "left_back");
-    print_temp(right_front, "right_front");
-    print_temp(right_back, "right_back");
-    print_temp(flywheel_arm, "flywheel_arm");
+    print_temp(left_front, "drive lf");
+    print_temp(left_back, "drive lb");
+    print_temp(right_front, "drive rf");
+    print_temp(right_back, "drive rb");
+    print_temp(flywheel_arm, "fly arm");
     print_temp(flywheel, "flywheel");
-    print_temp(lift_left, "lift_left");
-    print_temp(lift_right, "lift_right");
+    print_temp(lift_left, "lift l");
+    print_temp(lift_right, "lift r");
     pros::delay(1000);
   }
 }
