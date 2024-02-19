@@ -3,8 +3,7 @@
 #include <algorithm>
 #include <mutex>
 
-namespace // functions/variables local to this file
-{
+
 int line_num = 1;
 void print_temp(pros::Motor &motor, std::string name) {
   double temp = motor.get_temperature();
@@ -32,7 +31,7 @@ void print_temp(pros::Motor &motor, std::string name) {
   pros::screen::print(TEXT_MEDIUM, line_num, text.c_str());
   line_num++;
 }
-} // namespace
+
 
 // task that prints motor temps to brain screen
 void monitor_temp() {
