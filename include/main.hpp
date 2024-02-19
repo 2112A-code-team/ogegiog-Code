@@ -35,12 +35,16 @@
 #define PROS_USE_LITERALS
 
 #include "api.h"
+#include "pros/apix.h"
+
 
 /**
  * You should add more #includes here
  */
 //#include "okapi/api.hpp"
 //#include "pros/api_legacy.h"
+#include "lemlib/api.hpp"
+
 
 #include "autonomous.hpp"
 #include "globals.hpp"
