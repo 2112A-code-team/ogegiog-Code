@@ -32,34 +32,17 @@ struct Alert {
 
 class AlertList {
     public:
-        AlertList() : alert_list(), handled_alert_list(), new_alert(false) {}
+        AlertList() : alert_list(compare), handled_alert_list(compare), is_new_alert(false) {}
         void addAlert(Alert newAlert) {
             std::lock_guard<pros::Mutex> lock(alert_list_lock);
-            auto it = alert_list.begin();
-            alert_list.insert(newAlert);
-            if(alert_list.begin() != it) {
-                new_alert = true;
-            }
+            locklessAddAlert(newAlert);
         }
-        bool hasAlert(Alert newAlert) {
+        void addUniqueAlert(Alert newAlert) {
             std::lock_guard<pros::Mutex> lock(alert_list_lock);
-            auto start = alert_list.lower_bound(newAlert);
-            auto end = alert_list.upper_bound(newAlert);
-            for(auto i = start; i != end; i++) {
-                if(*i == newAlert) {
-                    return true;
-                }
+            if(locklessHasAlert(newAlert)) {
+                locklessAddAlert(newAlert);
             }
-            auto start2 = handled_alert_list.lower_bound(newAlert);
-            auto end2 = handled_alert_list.upper_bound(newAlert);
-            for(auto i = start2; i != end2; i++) {
-                if(*i == newAlert) {
-                    return true;
-                }
-            }
-
-            return false;
-        }
+        }       
         std::pair<std::string, bool> getCurrentAlert() {
             std::lock_guard<pros::Mutex> lock(alert_list_lock);
             if(alert_list.empty()) {
@@ -77,18 +60,43 @@ class AlertList {
                 alert_list.erase(it);
             }
             lastTime = pros::millis();
-            auto ret_val = std::pair<std::string, bool>(alert_list.begin()->text, new_alert);
-            new_alert = false;
+            auto ret_val = std::pair<std::string, bool>(alert_list.begin()->text, is_new_alert);
+            is_new_alert = false;
             return ret_val;
         }
     private:
+        void locklessAddAlert(Alert newAlert) {
+            auto it = alert_list.begin();
+            alert_list.insert(newAlert);
+            if(alert_list.begin() != it) {
+                is_new_alert = true;
+            }
+        } 
+        bool locklessHasAlert(Alert newAlert) {
+            auto start = alert_list.lower_bound(newAlert);
+            auto end = alert_list.upper_bound(newAlert);
+            for(auto i = start; i != end; i++) {
+                if(*i == newAlert) {
+                    return true;
+                }
+            }
+            auto start2 = handled_alert_list.lower_bound(newAlert);
+            auto end2 = handled_alert_list.upper_bound(newAlert);
+            for(auto i = start2; i != end2; i++) {
+                if(*i == newAlert) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
         pros::Mutex alert_list_lock;
         static bool compare(Alert a, Alert b) {
             return a.priority < b.priority;
         }
-        std::multiset<Alert> alert_list;
-        std::multiset<Alert> handled_alert_list;
-        bool new_alert;
+        std::multiset<Alert, decltype(compare)> alert_list;
+        std::multiset<Alert, decltype(compare)> handled_alert_list;
+        bool is_new_alert;
 };
 
 inline AlertList controller_alerts;

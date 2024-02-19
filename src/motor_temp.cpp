@@ -25,9 +25,7 @@ void print_temp(pros::Motor &motor, std::string name) {
 
   if(temp >= 55) {
     Alert temp_alert = Alert(text);
-    if(!controller_alerts.hasAlert(temp_alert)) {
-      controller_alerts.addAlert(temp_alert);
-    }
+    controller_alerts.addUniqueAlert(temp_alert);
   }
 
   text += " (Port: " + std::to_string(motor.get_port()) + ")";
