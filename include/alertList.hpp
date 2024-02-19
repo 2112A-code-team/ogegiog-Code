@@ -32,7 +32,7 @@ struct Alert {
 
 class AlertList {
     public:
-        AlertList() : alert_list(compare), handled_alert_list(compare), is_new_alert(false) {}
+        AlertList() : alert_list(&compare), handled_alert_list(&compare), is_new_alert(false) {}
         void addAlert(Alert newAlert) {
             std::lock_guard<pros::Mutex> lock(alert_list_lock);
             locklessAddAlert(newAlert);
@@ -94,8 +94,8 @@ class AlertList {
         static bool compare(Alert a, Alert b) {
             return a.priority < b.priority;
         }
-        std::multiset<Alert, decltype(compare)> alert_list;
-        std::multiset<Alert, decltype(compare)> handled_alert_list;
+        std::multiset<Alert, decltype(&compare)> alert_list;
+        std::multiset<Alert, decltype(&compare)> handled_alert_list;
         bool is_new_alert;
 };
 
