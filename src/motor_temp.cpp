@@ -60,7 +60,7 @@ void monitor_temp() {
   std::array<lv_obj_t*, 8> labels;
   for(int i = 0; i < 8; i++) {
     labels[i] = lv_label_create(motor_temp_page, NULL);
-    lv_obj_align(labels[i], NULL, LV_ALIGN_IN_TOP_LEFT, 10, 20 * i);
+    lv_obj_align(labels[i], NULL, LV_ALIGN_IN_TOP_LEFT, 10, 20 * i + 20);
   }
   while (true) {
     print_temp(left_front, "drive lf", labels[0]);
