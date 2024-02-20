@@ -28,6 +28,10 @@ inline pros::Imu inertial(11);
 
 inline std::atomic<int> wing_count = 0;
 
+inline lv_obj_t* all_tabs;
+inline lv_obj_t* motor_temp_page;
+inline lv_obj_t* auton_select_page;
+
 namespace controls
 {
     inline bool fly_arm_forward() {return master.get_digital(DIGITAL_L2);}

@@ -7,7 +7,9 @@
  * to keep execution time for this mode under a few seconds.
  */
 void initialize() {
-
+    all_tabs = lv_tabview_create(lv_scr_act(), NULL);
+    motor_temp_page = lv_tabview_add_tab(all_tabs, "Motors");
+    auton_select_page = lv_tabview_add_tab(all_tabs, "Auton");
 }
 
 /**
