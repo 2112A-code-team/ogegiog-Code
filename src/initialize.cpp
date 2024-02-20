@@ -1,4 +1,8 @@
 #include "main.hpp"
+#include <fstream>
+
+
+
 
 /**
  * Runs initialization code. This occurs as soon as the program is started.
@@ -7,10 +11,20 @@
  * to keep execution time for this mode under a few seconds.
  */
 void initialize() {
-    all_tabs = lv_tabview_create(lv_scr_act(), NULL);
+    
+    flywheel_arm.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+
+    all_tabs = lv_tabview_create(lv_scr_act(), nullptr);
     motor_temp_page = lv_tabview_add_tab(all_tabs, "Motors");
     auton_select_page = lv_tabview_add_tab(all_tabs, "Auton");
+
+    set_up_auton_selector();
+
+    pros::Task screen_task(monitor_temp);
+
+    chassis.calibrate();
 }
+
 
 /**
  * Runs while the robot is in the disabled state of Field Management System or

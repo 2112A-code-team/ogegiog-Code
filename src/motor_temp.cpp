@@ -9,6 +9,7 @@
 
 int line_num = 1;
 void print_temp(pros::Motor &motor, std::string name, lv_obj_t* label) {
+  /*
   static lv_style_t purple_style = lv_style_plain;
   purple_style.body.main_color = LV_COLOR_BLACK;
   purple_style.body.grad_color = LV_COLOR_BLACK;
@@ -27,24 +28,24 @@ void print_temp(pros::Motor &motor, std::string name, lv_obj_t* label) {
   yellow_style.text.color = LV_COLOR_YELLOW;
   green_style.text.color = LV_COLOR_GREEN;
   blue_style.text.color = LV_COLOR_AQUA;
-
+*/
   int temp = static_cast<int>(motor.get_temperature());
-
+  std::string text;
   if (temp >= 70) {
-    lv_label_set_style(label, &purple_style);
+    text += "#ff00ff ";
   } else if (temp >= 65) {
-    lv_label_set_style(label, &red_style);
+    text += "#ff0000 ";
   } else if (temp >= 60) {
-    lv_label_set_style(label, &orange_style);
+    text += "#ffa500 ";
   } else if (temp >= 55) {
-    lv_label_set_style(label, &yellow_style);
+    text += "#ffff00 ";
   } else if (temp >= 45) {
-    lv_label_set_style(label, &green_style);
+    text += "#00ff00 ";
   } else {
-    lv_label_set_style(label, &blue_style);
+    text += "#00ffff ";
   }
-  std::string text = name + ": " + std::to_string(temp) + "C";
-  text += " (Port " + std::to_string(motor.get_port()) + ")";
+  text += name + ": " + std::to_string(temp) + "C";
+  text += " (Port " + std::to_string(motor.get_port()) + ")#";
 
   if(temp >= 55) {
     Alert temp_alert = Alert(text);
@@ -59,8 +60,9 @@ void print_temp(pros::Motor &motor, std::string name, lv_obj_t* label) {
 void monitor_temp() {
   std::array<lv_obj_t*, 8> labels;
   for(int i = 0; i < 8; i++) {
-    labels[i] = lv_label_create(motor_temp_page, NULL);
-    lv_obj_align(labels[i], NULL, LV_ALIGN_IN_TOP_LEFT, 10, 20 * i + 20);
+    labels[i] = lv_label_create(motor_temp_page, nullptr);
+    lv_obj_align(labels[i], nullptr, LV_ALIGN_IN_TOP_LEFT, 10, 20 * i + 20);
+    lv_label_set_recolor(labels[i], true);
   }
   while (true) {
     print_temp(left_front, "drive lf", labels[0]);

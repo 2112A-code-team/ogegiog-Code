@@ -18,15 +18,58 @@ inline pros::Motor lift_right(11, pros::E_MOTOR_GEAR_RED);
 inline pros::Motor lift_left(-20, pros::E_MOTOR_GEAR_RED);
 inline pros::Motor_Group lift({lift_left, lift_right});
 inline pros::Motor flywheel_arm(-19, pros::E_MOTOR_GEAR_GREEN);
-inline pros::Motor flywheel(-12, pros::E_MOTOR_GEAR_GREEN);
+inline pros::Motor flywheel(-12, pros::E_MOTOR_GEAR_BLUE);
 inline pros::ADIDigitalOut wings('H');
+inline pros::ADIDigitalOut led('G');
 inline pros::Controller master(CONTROLLER_MASTER);
 inline pros::Imu inertial(11);
+inline pros::Distance front_distance(17);
+
+inline lemlib::Drivetrain_t drivetrain {
+  &left_wheels, // left drivetrain motors
+  &right_wheels, // right drivetrain motors
+  10.25, // track width
+  3.25, // wheel diameter
+  480 // wheel rpm
+};
+
+inline lemlib::OdomSensors_t sensors {
+  nullptr, // vertical tracking wheel 1
+  nullptr, // vertical tracking wheel 2
+  nullptr, // horizontal tracking wheel 1
+  nullptr, // horizontal tracking wheel 2
+  &inertial // inertial sensor
+};
+
+// forward/backward PID
+inline lemlib::ChassisController_t lateralController {
+    8, // kP
+    30, // kD
+    1, // smallErrorRange
+    100, // smallErrorTimeout
+    3, // largeErrorRange
+    500, // largeErrorTimeout
+    5 // slew rate
+};
+ 
+// turning PID
+inline lemlib::ChassisController_t angularController {
+    4, // kP
+    40, // kD
+    1, // smallErrorRange
+    100, // smallErrorTimeout
+    3, // largeErrorRange
+    500, // largeErrorTimeout
+    0 // slew rate
+};
+
+inline lemlib::Chassis chassis(drivetrain, lateralController, angularController, sensors);
 
 //inline pros::Mutex hot_motor_list_lock;
 //inline std::deque<std::string> hot_motor_list;
 
 inline std::atomic<int> wing_count = 0;
+inline std::atomic<int> flywheel_velocity = 80;
 
 inline lv_obj_t* all_tabs;
 inline lv_obj_t* motor_temp_page;

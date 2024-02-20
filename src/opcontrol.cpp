@@ -19,7 +19,7 @@ double get_joystick(pros::controller_analog_e_t joystick, double curve = 1,
   return joystick_val;
 }
 
-std::atomic<int> flywheel_velocity = 80;
+
 
 
 void update_controller() {
@@ -34,10 +34,10 @@ void update_controller() {
 
     text = "TV: ";
     if(controls::fvw_is_reversed()) text += "-";
-    text += std::to_string(flywheel_velocity);
+    text += std::to_string(flywheel_velocity) + " ";
     master.print(0, 0, text.c_str());
     pros::delay(100);
-    int real_vel = static_cast<int>( std::round(flywheel.get_actual_velocity()) );
+    int real_vel = static_cast<int>( flywheel.get_actual_velocity() );
     text = "AV: " + std::to_string(real_vel) + "     ";
     master.print(0, 7, text.c_str());
     pros::delay(100);
@@ -63,10 +63,6 @@ void endgame_timer() {
   controller_alerts.addAlert(Alert("15s left!!", Alert::Priority::HIGHEST));
 }
 
-void test_alert() {
-  pros::delay(15*1000);
-  controller_alerts.addAlert(Alert("test", Alert::Priority::HIGHEST));
-}
 
 /**
  * Runs the operator control code. This function will be started in its own task
@@ -83,11 +79,38 @@ void test_alert() {
  */
 void opcontrol() {
   pros::Task controller_task(update_controller);
-  pros::Task screen_task(monitor_temp);
   pros::Task endgame_task(endgame_timer);
-  pros::Task test_task(test_alert);
 
   while(true) {
+
+    int time = 0;
+    //test auton
+    while(controls::fvw_up() && controls::fvw_down()
+      && controls::lift_up() && controls::lift_down()) {
+        pros::delay(10);
+        time += 10;
+        if(time == 1000) {
+          controller_alerts.addAlert(Alert("Auton test in 1s!!!", Alert::Priority::HIGHEST, 1000));
+        }
+        if(time == 2000) {
+          controller_alerts.addAlert(Alert("Skills: A, Regular: X", Alert::Priority::HIGHEST, 1000));
+          bool skills = false;
+          bool regular = false;
+          while(!skills && !regular) {
+            skills = master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_A);
+            regular = master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_X);
+          }
+          pros::Task auton_tesk_task(autonomous);
+          if (skills) {
+            controller_alerts.addAlert(Alert("Skills", Alert::Priority::HIGHEST));
+            pros::delay(60 * 1000);
+          } else {
+            controller_alerts.addAlert(Alert("Regular Auton", Alert::Priority::HIGHEST));
+            pros::delay(15 * 1000);
+          }
+          auton_tesk_task.suspend();
+        }
+      }
 
     //wing control
     if(controls::wing_is_out()) {
@@ -109,7 +132,7 @@ void opcontrol() {
     if(controls::fvw_up()) flywheel_velocity++;
     if(controls::fvw_down()) flywheel_velocity--;
     if(flywheel_velocity < 0) flywheel_velocity = 0;
-    if(flywheel_velocity > 200) flywheel_velocity = 200;
+    if(flywheel_velocity > 200) flywheel_velocity = 600;
     if(controls::flywheel_is_on() && controls::fvw_is_reversed()) {
       flywheel.move_velocity(-flywheel_velocity);
     } else if (controls::flywheel_is_on()) {
@@ -127,8 +150,10 @@ void opcontrol() {
       lift.brake();
       if(lift.get_positions()[0] < 65) {
         lift.set_brake_modes(pros::E_MOTOR_BRAKE_COAST);
+        led.set_value(1);
       } else {
         lift.set_brake_modes(pros::E_MOTOR_BRAKE_HOLD);
+        led.set_value(0);
       }
     }
 
