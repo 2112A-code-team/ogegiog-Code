@@ -28,7 +28,7 @@ void print_temp(pros::Motor &motor, std::string name, lv_obj_t* label) {
   green_style.text.color = LV_COLOR_GREEN;
   blue_style.text.color = LV_COLOR_AQUA;
 
-  double temp = motor.get_temperature();
+  int temp = static_cast<int>(motor.get_temperature());
 
   if (temp >= 70) {
     lv_label_set_style(label, &purple_style);
@@ -43,7 +43,7 @@ void print_temp(pros::Motor &motor, std::string name, lv_obj_t* label) {
   } else {
     lv_label_set_style(label, &blue_style);
   }
-  std::string text = name + ": " + std::to_string(temp);
+  std::string text = name + ": " + std::to_string(temp) + "C";
   text += " (Port " + std::to_string(motor.get_port()) + ")";
 
   if(temp >= 55) {

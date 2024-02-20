@@ -38,7 +38,7 @@ void update_controller() {
     master.print(0, 0, text.c_str());
     pros::delay(100);
     int real_vel = static_cast<int>( std::round(flywheel.get_actual_velocity()) );
-    text = "AV: " + std::to_string(real_vel);
+    text = "AV: " + std::to_string(real_vel) + "     ";
     master.print(0, 7, text.c_str());
     pros::delay(100);
     text = "Wing Count: " + std::to_string(wing_count);
