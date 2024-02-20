@@ -4,27 +4,28 @@
         "project_name": "2112-code1",
         "target": "v5",
         "templates": {
-            "EZ-Template": {
-                "location": "C:\\Users\\Ayaan\\AppData\\Roaming\\PROS\\templates\\EZ-Template@2.2.0",
+            "LemLib": {
+                "location": "C:\\Users\\Ayaan\\AppData\\Roaming\\PROS\\templates\\LemLib@0.4.7",
                 "metadata": {
                     "origin": "local"
                 },
-                "name": "EZ-Template",
+                "name": "LemLib",
                 "py/object": "pros.conductor.templates.local_template.LocalTemplate",
                 "supported_kernels": "^3.8.0",
                 "system_files": [
-                    "include\\EZ-Template\\sdcard.hpp",
-                    "include\\EZ-Template\\auton.hpp",
-                    "include\\EZ-Template\\PID.hpp",
-                    "include\\EZ-Template\\drive\\drive.hpp",
-                    "include\\EZ-Template\\auton_selector.hpp",
-                    "include\\EZ-Template\\util.hpp",
-                    "firmware\\EZ-Template.a",
-                    "include\\EZ-Template\\api.hpp"
+                    "firmware\\LemLib.a",
+                    "include\\lemlib\\chassis\\odom.hpp",
+                    "include\\lemlib\\pose.hpp",
+                    "include\\lemlib\\util.hpp",
+                    "include\\lemlib\\chassis\\trackingWheel.hpp",
+                    "include\\lemlib\\pid.hpp",
+                    "include\\lemlib\\api.hpp",
+                    "include\\lemlib\\logger.hpp",
+                    "include\\lemlib\\chassis\\chassis.hpp"
                 ],
                 "target": "v5",
                 "user_files": [],
-                "version": "2.2.0"
+                "version": "0.4.7"
             },
             "kernel": {
                 "location": "C:\\Users\\Ayaan\\AppData\\Roaming\\PROS\\templates\\kernel@3.8.0",
@@ -331,7 +332,8 @@
             }
         },
         "upload_options": {
-            "icon": "pros"
+            "icon": "pizza",
+            "slot": 6
         }
     }
 }

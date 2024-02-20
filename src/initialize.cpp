@@ -7,13 +7,9 @@
  * to keep execution time for this mode under a few seconds.
  */
 void initialize() {
-  cata_left.set_encoder_units(MOTOR_ENCODER_DEGREES);
-  cata_right.set_encoder_units(MOTOR_ENCODER_DEGREES);
-  cata_motors.set_encoder_units(MOTOR_ENCODER_DEGREES);
-  intake_motor.set_encoder_units(MOTOR_ENCODER_DEGREES);
-
-  ez::as::auton_selector.add_autons({});
-  
+    all_tabs = lv_tabview_create(lv_scr_act(), NULL);
+    motor_temp_page = lv_tabview_add_tab(all_tabs, "Motors");
+    auton_select_page = lv_tabview_add_tab(all_tabs, "Auton");
 }
 
 /**

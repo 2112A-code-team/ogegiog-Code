@@ -3,6 +3,6 @@
 
 #include "main.hpp"
 
-void monitor_temp(void*);
+void monitor_temp();
 
 #endif
