@@ -148,7 +148,7 @@ void opcontrol() {
       lift.move_velocity(-100);
     } else {
       lift.brake();
-      if(lift.get_positions()[0] < 65) {
+      if(lift.get_positions()[0] < 360) {
         lift.set_brake_modes(pros::E_MOTOR_BRAKE_COAST);
         led.set_value(1);
       } else {
@@ -161,7 +161,7 @@ void opcontrol() {
     double forward_speed = get_joystick(ANALOG_RIGHT_X);
     double turn_speed = get_joystick(ANALOG_LEFT_Y);
     left_wheels.move(forward_speed + turn_speed);
-    right_wheels.move(forward_speed - turn_speed);
+    right_wheels.move(-1 * (forward_speed - turn_speed)); //not sure why -1 is needed but it is
     pros::delay(10);
   }
 }

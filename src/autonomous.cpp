@@ -41,7 +41,7 @@ lv_res_t change_auton_action(lv_obj_t * list_btn) {
             auton_file << selected_auton;
         }
   }
-  lv_label_set_text(auton_desc, (selected_auton + ": " + auton_list[selected_auton].second).c_str());
+  lv_label_set_text(auton_desc, (selected_auton + ": " + auton_list.find(selected_auton)->second.second).c_str());
   return LV_RES_OK;
 }
 
@@ -77,6 +77,18 @@ void near_side_auton() {
 }
 
 void tune_pid() {
+  int i = 10;
+  while (--i) {
+    led.set_value(0);
+    pros::delay(100);
+    led.set_value(1);
+    pros::delay(100);
+  }
+  //right_wheels.move_velocity(600);
+  //left_wheels.move_velocity(600);
+  //pros::delay(1000);
+  //right_wheels.brake();
+  //left_wheels.brake();
   chassis.moveTo(10, 0 , 10);
 }
 

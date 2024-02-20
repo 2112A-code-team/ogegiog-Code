@@ -10,8 +10,8 @@
 */
 inline pros::Motor left_front(-1, pros::E_MOTOR_GEAR_BLUE);
 inline pros::Motor left_back(-2, pros::E_MOTOR_GEAR_BLUE);
-inline pros::Motor right_front(-9, pros::E_MOTOR_GEAR_BLUE);
-inline pros::Motor right_back(-10, pros::E_MOTOR_GEAR_BLUE);
+inline pros::Motor right_front(9, pros::E_MOTOR_GEAR_BLUE);
+inline pros::Motor right_back(10, pros::E_MOTOR_GEAR_BLUE);
 inline pros::Motor_Group left_wheels({left_front, left_back});
 inline pros::Motor_Group right_wheels({right_front, right_back});
 inline pros::Motor lift_right(11, pros::E_MOTOR_GEAR_RED);
@@ -22,7 +22,7 @@ inline pros::Motor flywheel(-12, pros::E_MOTOR_GEAR_BLUE);
 inline pros::ADIDigitalOut wings('H');
 inline pros::ADIDigitalOut led('G');
 inline pros::Controller master(CONTROLLER_MASTER);
-inline pros::Imu inertial(11);
+inline pros::Imu inertial(6);
 inline pros::Distance front_distance(17);
 
 inline lemlib::Drivetrain_t drivetrain {

@@ -16,7 +16,7 @@ void tune_pid();
 void set_up_auton_selector();
 
 // {*Name*, {*Function*, *Description*}}
-inline std::map<std::string, std::pair<void(*)(), std::string> > auton_list{
+inline const std::map<std::string, std::pair<void(*)(), std::string> > auton_list{
     {"Far Side", {far_side_auton, "Does stuff"}},
     {"Near Side", {near_side_auton, "Does stuff"}},
     {"Skills", {skills, "Does stuff"}},

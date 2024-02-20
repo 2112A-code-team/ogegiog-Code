@@ -14,6 +14,9 @@ void initialize() {
     
     flywheel_arm.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
 
+    lift.tare_position();
+
+
     all_tabs = lv_tabview_create(lv_scr_act(), nullptr);
     motor_temp_page = lv_tabview_add_tab(all_tabs, "Motors");
     auton_select_page = lv_tabview_add_tab(all_tabs, "Auton");
