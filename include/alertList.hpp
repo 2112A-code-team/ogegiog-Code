@@ -39,7 +39,7 @@ class AlertList {
         }
         void addUniqueAlert(Alert newAlert) {
             std::lock_guard<pros::Mutex> lock(alert_list_lock);
-            if(locklessHasAlert(newAlert)) {
+            if(!locklessHasAlert(newAlert)) {
                 locklessAddAlert(newAlert);
             }
         }       

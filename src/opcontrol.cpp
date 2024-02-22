@@ -90,6 +90,16 @@ void opcontrol() {
         pros::delay(10);
         time += 10;
         if(time == 1000) {
+          controller_alerts.addAlert(Alert("PID tune in 1s!!!", Alert::Priority::HIGHEST, 900));
+        }
+        if(time == 2000) {
+          master.rumble(".-.-");
+          pros::delay(1000);
+          controller_task.suspend();
+          manual_tune_pid();
+          controller_task.resume();
+        }
+        /*if(time == 1000) {
           controller_alerts.addAlert(Alert("Auton test in 1s!!!", Alert::Priority::HIGHEST, 1000));
         }
         if(time == 2000) {
@@ -109,7 +119,7 @@ void opcontrol() {
             pros::delay(15 * 1000);
           }
           auton_tesk_task.suspend();
-        }
+        }*/
       }
 
     //wing control

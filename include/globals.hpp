@@ -30,7 +30,7 @@ inline lemlib::Drivetrain_t drivetrain {
   &right_wheels, // right drivetrain motors
   10.25, // track width
   3.25, // wheel diameter
-  480 // wheel rpm
+  400 // wheel rpm
 };
 
 inline lemlib::OdomSensors_t sensors {
@@ -43,8 +43,8 @@ inline lemlib::OdomSensors_t sensors {
 
 // forward/backward PID
 inline lemlib::ChassisController_t lateralController {
-    8, // kP
-    30, // kD
+    35, // kP
+    400, // kD
     1, // smallErrorRange
     100, // smallErrorTimeout
     3, // largeErrorRange
@@ -55,7 +55,7 @@ inline lemlib::ChassisController_t lateralController {
 // turning PID
 inline lemlib::ChassisController_t angularController {
     4, // kP
-    40, // kD
+    150, // kD
     1, // smallErrorRange
     100, // smallErrorTimeout
     3, // largeErrorRange
@@ -74,6 +74,7 @@ inline std::atomic<int> flywheel_velocity = 80;
 inline lv_obj_t* all_tabs;
 inline lv_obj_t* motor_temp_page;
 inline lv_obj_t* auton_select_page;
+inline lv_obj_t* lemlib_debug_page;
 
 namespace controls
 {
