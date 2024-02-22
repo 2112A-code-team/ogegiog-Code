@@ -1,5 +1,6 @@
 #include "main.hpp"
 #include <fstream>
+#include <ios>
 #include <iostream>
 
 /**
@@ -35,13 +36,9 @@ static lv_obj_t* auton_desc;
 
 lv_res_t change_auton_action(lv_obj_t * list_btn) {
   selected_auton = lv_list_get_btn_text(list_btn);
-  if(pros::usd::is_installed()) {
-        std::ofstream auton_file("usd/selected_auton");
-        if(auton_file.good()) {
-            auton_file << selected_auton;
-        } else {
-          std::cout << "something";
-        }
+  std::ofstream auton_file("usd/selected_auton.txt", std::ios_base::trunc | std::ios_base::out);
+  if(auton_file.good()) {
+    auton_file << selected_auton;
   } else {
     std::cout << "something";
   }
@@ -50,18 +47,14 @@ lv_res_t change_auton_action(lv_obj_t * list_btn) {
 }
 
 void set_up_auton_selector() {
-
-  if(pros::usd::is_installed()) {
-        std::ifstream auton_file("usd/selected_auton");
-        if(auton_file.good()) {
-            auton_file >> selected_auton;
-        } else {
-          std::cout << "something";
-        }
+  //get auton from file
+  std::ifstream auton_file("usd/selected_auton.txt");
+  if(auton_file.good()) {
+      auton_file >> selected_auton;
   } else {
     std::cout << "something";
   }
-
+  
   //set up auton selector lvgl
   lv_obj_t* auton_select_list = lv_list_create(auton_select_page, nullptr);
   lv_obj_set_size(auton_select_list, 200, 200);
