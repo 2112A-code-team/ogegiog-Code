@@ -1,3 +1,4 @@
+#include "display/lv_core/lv_obj.h"
 #include "main.hpp"
 #include <fstream>
 
@@ -11,25 +12,22 @@
  * to keep execution time for this mode under a few seconds.
  */
 void initialize() {
-    
+  
     flywheel_arm.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
-
     left_wheels.set_brake_modes(pros::E_MOTOR_BRAKE_COAST);
     right_wheels.set_brake_modes(pros::E_MOTOR_BRAKE_COAST);
-
     lift.tare_position();
-
 
     all_tabs = lv_tabview_create(lv_scr_act(), nullptr);
     motor_temp_page = lv_tabview_add_tab(all_tabs, "Motors");
-    auton_select_page = lv_tabview_add_tab(all_tabs, "Auton");
+    //auton_select_page = lv_tabview_add_tab(all_tabs, "Auton");
     lemlib_debug_page = lv_tabview_add_tab(all_tabs, "Debug");
 
-    set_up_auton_selector();
+    //set_up_auton_selector();
+    chassis.calibrate();
 
     pros::Task screen_task(monitor_temp);
 
-    chassis.calibrate();
 
     pros::Task lemlib_debug_task([=]{
         lv_obj_t* x_label = lv_label_create(lemlib_debug_page, nullptr);
@@ -64,4 +62,12 @@ void disabled() {}
  * This task will exit when the robot is enabled and autonomous or opcontrol
  * starts.
  */
-void competition_initialize() {}
+void competition_initialize() {
+  while (true) {
+    pros::delay(100);
+    int value = selector_pot.get_value();
+    int range = 4095 / auton_list2.size();
+    int selected_auton_index = std::min(value / range, static_cast<int>(auton_list2.size()) - 1);
+    master.set_text(0, 0, auton_list2[selected_auton_index].first.c_str());
+  }
+}

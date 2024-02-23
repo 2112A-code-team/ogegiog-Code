@@ -160,10 +160,8 @@ void opcontrol() {
       lift.brake();
       if(lift.get_positions()[0] < 360) {
         lift.set_brake_modes(pros::E_MOTOR_BRAKE_COAST);
-        led.set_value(1);
       } else {
         lift.set_brake_modes(pros::E_MOTOR_BRAKE_HOLD);
-        led.set_value(0);
       }
     }
 

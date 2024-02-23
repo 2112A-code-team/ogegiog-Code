@@ -1,6 +1,6 @@
+#include "autonomous.hpp"
+#include "globals.hpp"
 #include "main.hpp"
-#include <fstream>
-#include <ios>
 #include <iostream>
 
 /**
@@ -15,161 +15,170 @@
  * from where it left off.
  */
 void autonomous() {
-  std::cout << selected_auton;
+/*  std::cout << selected_auton;
   auto it = auton_list.find(selected_auton);
   if(it != auton_list.end()) {
     it->second.first();
   } else {
     std::cout << "NO AUTON FOUND";
-  }
-}
+  } */
 
-/*
-ANGLE VALUES FOR TURNING:
-Turns are relative to STARTING angle of robot, NOT the current angle
-    0/360 (start angle)
-  90 [ ] 270
-     180
-*/
-
-static lv_obj_t* auton_desc;
-
-lv_res_t change_auton_action(lv_obj_t * list_btn) {
-  selected_auton = lv_list_get_btn_text(list_btn);
-  std::ofstream auton_file("usd/selected_auton.txt", std::ios_base::trunc | std::ios_base::out);
-  if(auton_file.good()) {
-    auton_file << selected_auton;
-  } else {
-    std::cout << "something";
-  }
-  lv_label_set_text(auton_desc, (selected_auton + ": " + auton_list.find(selected_auton)->second.second).c_str());
-  return LV_RES_OK;
-}
-
-void set_up_auton_selector() {
-  //get auton from file
-  std::ifstream auton_file("usd/selected_auton.txt");
-  if(auton_file.good()) {
-      auton_file >> selected_auton;
-  } else {
-    std::cout << "something";
-  }
   
-  //set up auton selector lvgl
-  lv_obj_t* auton_select_list = lv_list_create(auton_select_page, nullptr);
-  lv_obj_set_size(auton_select_list, 200, 200);
-  lv_obj_align(auton_select_list, nullptr, LV_ALIGN_IN_TOP_LEFT, 20, 20);
+  int value = selector_pot.get_value();
+  int range = 4095 / auton_list2.size();
+  int selected_auton_index = std::min(value / range, static_cast<int>(auton_list2.size()) - 1);
+  pros::delay(50);
+  master.set_text(1, 1, auton_list2[selected_auton_index].first.c_str());
+  pros::delay(50);
+  (auton_list2[selected_auton_index].second)();
+}
 
-  auton_desc = lv_label_create(auton_select_page, NULL);
-  lv_obj_set_size(auton_desc, 200, 200);
-  lv_obj_align(auton_desc, nullptr, LV_ALIGN_IN_TOP_LEFT, 240, 20);
-  lv_label_set_long_mode(auton_desc, LV_LABEL_LONG_BREAK);
 
-  for(auto i : auton_list) {
-      lv_obj_t* list_el;
-      list_el = lv_list_add(auton_select_list, nullptr, i.first.c_str(), &change_auton_action);
-      if(i.first == selected_auton) {
-        lv_list_focus(list_el, false);
-      }
-  }
+static void turn_and_move(double x, double y, int timeout) {
+  chassis.moveTo(x, y, timeout);
+  chassis.turnTo(x, y, timeout);
+}
+
+static void move_away_from_wall() {
+  chassis.moveTo(chassis.getPose().x, chassis.getPose().y + 9, 1000);
+  chassis.moveTo(chassis.getPose().x, chassis.getPose().y + 6, 1000);
 }
 
 void far_side_auton() {
-  chassis.moveTo(0, 15, 1500);
-  chassis.turnTo(10, 0, 1500);
-  auto pose = chassis.getPose();
-  std::cout << pose.x << std::endl;
-  std::cout << pose.y << std::endl;
-  std::cout << pose.theta << std::endl;
+  const double distFromWall = front_distance.get()/25.4 + 5;
+  chassis.setPose(-180 + distFromWall, -173.25, 0);
+
+  move_away_from_wall();
+
+  //go to match load zone
+  turn_and_move(-120, -120, 1000);
+  turn_and_move(-137, -137, 1000);
+  flywheel_arm.move_absolute(500, 200);
+  flywheel.move_velocity(-300);
+  pros::delay(1000);
+  chassis.moveTo(-120, -120, 1000);
+
+  //drop triball
+  chassis.turnTo(-60, -150, 750);
+  flywheel.move_velocity(0);
+  flywheel_arm.move_absolute(0, 200);
+  pros::delay(500);
+
+  //push triballs in neutral zone
+  turn_and_move(-60, -60, 2500);
+  turn_and_move(-90, -26, 1000);
+  chassis.turnTo(180, -26, 1000);
+  wings.set_value(1);
+  left_wheels.move(127);
+  right_wheels.move(127);
+  pros::delay(1500);
+  left_wheels.move(0);
+  right_wheels.move(0);
+  chassis.setPose(-8, -26, chassis.getPose().theta);
+  chassis.moveTo(-35, -26, 500);
+  turn_and_move(-120, -120, 2500);
+  turn_and_move(-60, -150, 1000);
+  chassis.moveTo(-10, -150, 1000);
+  //master.set_text(1, 1, "far side end");
 }
 
 void near_side_auton() {
+  //master.set_text(1, 1, "near side start");
+  //const double distFromWall = front_distance.get()/25.4 + 5;
+  //chassis.setPose(180 - distFromWall, -173.25, 180);
+  chassis.setPose(60, -150, 270);
+  
+  //pick up triball under bar
+  flywheel_arm.move_absolute(500, 200);
+  flywheel.move_velocity(-300);
+  pros::delay(1000);
+  chassis.moveTo(9, -150, 1000);
 
-}
+  //move back
+  chassis.moveTo(90, -150, 1000);
+
+  //go to side of goal
+  chassis.turnTo(60, -180, 1000);
+  chassis.moveTo(150, -90, 1500);
+  chassis.turnTo(150, -180, 1000);
+
+  //ram goal
+  chassis.moveTo(150, -67, 1000);
+  chassis.moveTo(150, -90, 1500);
+  
+  //turn and ram again
+  chassis.turnTo(150, 0, 1000);
+  flywheel_arm.move_absolute(0, 200);
+  flywheel.move_velocity(0);
+  pros::delay(1000);
+  chassis.moveTo(150, -67, 2000);
+  chassis.moveTo(150, -90, 1500);
+
+  //move between two triballs on auton line
+  turn_and_move(90, -90, 2000);
+  turn_and_move(33, 0, 2500);
+  chassis.turnTo(-180, 0, 1000);
+
+  //intake one triball
+  flywheel_arm.move_absolute(500, 200);
+  flywheel.move_velocity(-300);
+  pros::delay(1000);
+
+  chassis.turnTo(180, 0, 1500);
+  flywheel_arm.move_absolute(0, 200);
+  flywheel.move_velocity(0);
+  pros::delay(1000);
+
+  left_wheels.move(127);
+  right_wheels.move(127);
+
 
 /*
-void tune_pid() {
+  move_away_from_wall();
 
-  int now = pros::millis();
-  chassis.moveTo(0, 10, 10000, 9999);
-  int duration = pros::millis() - now;
-  int lastDuration = duration;
-  auto const initalController = lateralController;
-  auto lastGoodController = lateralController;
-
-  chassis = lemlib::Chassis(drivetrain, initalController, angularController, sensors);
-  chassis.moveTo(0, 0, 10000, 150);
-
-  while (true) {
-    {
-      while (true) {
-        int now = pros::millis();
-        chassis = lemlib::Chassis(drivetrain, lateralController, angularController, sensors);
-        pros::delay(100);
-        const double home_dist = front_distance.get()/25.4;
-        chassis.moveTo(0, 10, 10000, 9999);
-        int duration = pros::millis() - now;
-        pros::delay(100);
-        double dist = front_distance.get()/25.4 - home_dist;
-
-        chassis = lemlib::Chassis(drivetrain, initalController, angularController, sensors);
-        chassis.moveTo(0, 0, 10000, 150);
-
-        if(duration < 1500 && dist < 11.5) {
-          lateralController.kP *= 2;
-        } else {
-          break;
-        }
-        
-    }
-    }
-    {
-      int lastDuration = 11000;
-      while (true) {
-        int now = pros::millis();
-        chassis = lemlib::Chassis(drivetrain, lateralController, angularController, sensors);
-        pros::delay(100);
-        const double home_dist = front_distance.get()/25.4;
-        chassis.moveTo(0, 10, 10000, 9999);
-        int duration = pros::millis() - now;
-        pros::delay(100);
-        double dist = front_distance.get()/25.4 - home_dist;
-
-        chassis = lemlib::Chassis(drivetrain, initalController, angularController, sensors);
-        chassis.moveTo(0, 0, 10000, 150);
-
-        if(duration <= lastDuration && dist > 9.5) {
-          lateralController.kD += 10;
-        } else {
-          lateralController.kP -= 10;
-          break;
-        }
-        lastDuration = duration;
-      }
-    }
-    int now = pros::millis();
-    chassis = lemlib::Chassis(drivetrain, lateralController, angularController, sensors);
-    chassis.moveTo(0, 10, 10000, 9999);
-    int duration = pros::millis() - now;
-    
-    chassis = lemlib::Chassis(drivetrain, initalController, angularController, sensors);
-    chassis.moveTo(0, 0, 10000, 150);
-
-    if(duration < lastDuration) {
-      lastGoodController = lateralController;
-    } else {
-      break;
-    }
-  }
-  lateralController = lastGoodController;
-  std::cout << "kp:" << lateralController.kP << std::endl;
-  std::cout << "kd:" << lateralController.kD << std::endl;
-  chassis = lemlib::Chassis(drivetrain, lateralController, angularController, sensors);
-  chassis.moveTo(0, 10, 1000);
-  //chassis.moveTo(0, 0, 10000, 50);
-
-}
+  turn_and_move(150, -68, 1500);
+  turn_and_move(120, -120, 1000);
+  turn_and_move(33, 0, 2500);
+  chassis.turnTo(-180, 0, 1000);
+  flywheel_arm.move_absolute(500, 200);
+  flywheel.move_velocity(-300);
+  pros::delay(1000);
+  left_wheels.move(-127);
+  right_wheels.move(-127);
+  chassis.setPose(113, 0, chassis.getPose().theta);
+  chassis.moveTo(100, 0, 1000);
+  chassis.turnTo(180, 0, 1000);
+  flywheel.move_velocity(0);
+  flywheel_arm.move_absolute(0, 200);
+  left_wheels.move(127);
+  right_wheels.move(127);
+ // master.set_text(1, 1, "near side end");
 */
+}
+
+void skills() {
+  //master.set_text(1, 1, "skills start");
+  //const double distFromWall = front_distance.get()/25.4 + 5;
+  chassis.setPose(-120, -130, 90);
+  flywheel.move_velocity(300);
+  pros::delay(30 * 1000);
+  chassis.moveTo(60, -130, 5000);
+  wings.set_value(1);
+  turn_and_move(110, -110, 2500);
+  chassis.turnTo(150, 0, 1500);
+  left_wheels.move(127);
+  right_wheels.move(127);
+  pros::delay(4000);
+  left_wheels.move(0);
+  pros::delay(3000);
+  right_wheels.move(0);
+
+  //move_away_from_wall();
+
+  //chassis.moveTo(0, 15, 1500);
+  //chassis.turnTo(10, 0, 1500);
+  //master.set_text(1, 1, "skills end");
+}
 
 void manual_tune_pid() {
   master.clear();
@@ -201,14 +210,11 @@ void manual_tune_pid() {
     }
     std::string text = "kp: " + std::to_string(static_cast<int>(lateralController.kP));
     text += "kd: " + std::to_string(static_cast<int>(lateralController.kD));
-    master.set_text(0, 0, text);
+    master.set_text(0, 0, text.c_str());
     pros::delay(100);
   }
 }
 
-void skills() {
-
-}
 
 
 static int time_chassis_move(lemlib::ChassisController_t newLateralController) {
@@ -254,7 +260,8 @@ void tune_pid() {
         pros::delay(100);
         master.clear_line(0);
         pros::delay(100);
-        master.set_text(0,0, std::to_string(static_cast<int>(lowerRangeController.kP)) + " " + std::to_string(static_cast<int>(lowerRangeController.kD)));
+        std::string text = std::to_string(static_cast<int>(lowerRangeController.kP)) + " " + std::to_string(static_cast<int>(lowerRangeController.kD));
+        master.set_text(0,0, text.c_str());
         return;
       }
     }

@@ -4,6 +4,7 @@
 #include "main.hpp"
 #include <map>
 #include <utility>
+#include <array>
 
 void far_side_auton();
 
@@ -23,6 +24,14 @@ inline const std::map<std::string, std::pair<void(*)(), std::string> > auton_lis
     {"Near Side", {near_side_auton, "Does stuff"}},
     {"Skills", {skills, "Does stuff"}}
 };
+
+//no idea why double braces are needed at start and end, but they are
+
+inline const std::array<std::pair<std::string,void(*)()>, 3> auton_list2 {{
+  {"Far Side", far_side_auton},
+  {"Near Side", near_side_auton},
+  {"Skills", skills}
+}}; 
 
 inline std::string selected_auton = "Far Side";
 

@@ -1,6 +1,7 @@
 #ifndef _GLOBALS_HPP_
 #define _GLOBALS_HPP_
 #include "main.hpp" 
+#include "pros/adi.hpp"
 #include <deque>
 #include <atomic>
 
@@ -20,7 +21,7 @@ inline pros::Motor_Group lift({lift_left, lift_right});
 inline pros::Motor flywheel_arm(-19, pros::E_MOTOR_GEAR_GREEN);
 inline pros::Motor flywheel(-12, pros::E_MOTOR_GEAR_BLUE);
 inline pros::ADIDigitalOut wings('H');
-inline pros::ADIDigitalOut led('G');
+inline pros::ADIAnalogIn selector_pot('G');
 inline pros::Controller master(CONTROLLER_MASTER);
 inline pros::Imu inertial(6);
 inline pros::Distance front_distance(17);
